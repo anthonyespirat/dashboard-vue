@@ -6,6 +6,7 @@ const Home = {template: '<div> CACA </div>'}
 const routes = [
   { path: '/', component: Dashboard },
   { path: '/users', component: Users },
+  { path: '/users/:filter', component: Users },
 
 ]
 

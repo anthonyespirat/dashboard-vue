@@ -24,4 +24,16 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+button {
+    background: none;
+    border: 1px solid grey;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color .2s, color .2s;
+}
+button:hover {
+    background-color: #485fc7 ;
+    color: #FCFCFC;
+    border: 1px solid #485fc7;
+}
 </style>

@@ -1,11 +1,25 @@
 <script>
-import { nextTick } from '@vue/runtime-core'
 import users from '../lib/fake_user'
+import UserParams from './UserParams.vue'
+import User from './User.vue'
 export default {
+  components: {
+    UserParams,
+    User
+  },
   data() {
     return {
       users: users,
-      checkedUser: []
+      checkedUser: [],
+      filter: undefined
+    }
+  },
+  watch: {
+    '$router.currentRoute': {
+      handler: function({_value:route}) {
+        this.filter = route.params.filter
+      },
+      deep: true
     }
   },
   methods: {
@@ -15,15 +29,24 @@ export default {
       if (isChecked) this.checkedUser.push(e.target.name)
       else if (this.checkedUser.includes(e.target.name)) {
         this.checkedUser = this.checkedUser.filter((el) => el !== e.target.name)
-      } else return
+      }
     }
-  }
+  }, 
+  computed: {
+    filterUsers() {
+      this.users = users
+      this.filter = this.$router.currentRoute._value.params.filter
+      if(this.filter && this.filter === 'admin') return this.users.filter(el => el.role === 'admin')
+      else if (this.filter === 'auth') return this.users.filter(el => el.role === 'auth') 
+      else return users
+    }
+  },
 }
 </script>
 
 <template>
   <h1 class="title">Users</h1>
-    <form class="action-group">
+    <form @submit.prevent="" class="action-group">
       <label for='action'>Group Action</label>
       <div class='wrapper'>
         <select name='action' id='action'>
@@ -46,16 +69,9 @@ export default {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="user of users" :key="user.id">
-        <td>
-          <input type='checkbox' :name="user.id" @change="check($event)">
-        </td>
-        <td>{{user.id}}</td>
-        <td>{{user.username}}</td>
-        <td>{{user.role}}</td>
-        <td>{{user.email}}</td>
-        <td></td>
-      </tr>
+      <template v-for="user of filterUsers" :key="user.id">
+        <User :user="user" :check="check" />
+      </template>
     </tbody>
   
   </table>
@@ -65,6 +81,7 @@ export default {
 <style scoped>
   table {
     width: 100%;
+    border-collapse : collapse;
   }
   .action-group {
     display: flex;
